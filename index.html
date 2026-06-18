@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CINEFN — From Concept to Camera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:    #080808;
+    --charcoal: #111111;
+    --card:     #161616;
+    --border:   #242424;
+    --gold:     #C8922A;
+    --gold-lt:  #E4AA40;
+    --gold-dim: rgba(200,146,42,0.15);
+    --white:    #F2F2F0;
+    --muted:    #5A5A5A;
+    --faint:    #2A2A2A;
+    --mono:     'JetBrains Mono', monospace;
+    --display:  'Bebas Neue', sans-serif;
+    --body:     'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 60px;
+    height: 72px;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.98) 0%, rgba(8,8,8,0.0) 100%);
+    backdrop-filter: blur(0px);
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(8,8,8,0.96);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--display);
+    font-size: 26px;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-logo-dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.6); }
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.25s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    border: none;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative;
+    height: 100vh; min-height: 800px;
+    display: flex; align-items: center;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(200,146,42,0.04) 0%, transparent 65%),
+                radial-gradient(ellipse 40% 60% at 30% 80%, rgba(200,146,42,0.02) 0%, transparent 60%),
+                linear-gradient(135deg, #0A0A0A 0%, #0D0D0D 100%);
+  }
+  .hero-grid-overlay {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,146,42,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,146,42,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at center, black 30%, transparent 80%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1fr 1fr;
+    width: 100%; max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 80px;
+    gap: 40px;
+    align-items: center;
+  }
+  .hero-left { padding-top: 40px; }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
+  .hero-headline {
+    font-family: var(--display);
+    font-size: clamp(72px, 7.5vw, 120px);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 32px;
+  }
+  .hero-headline .line {
+    display: block;
+    overflow: hidden;
+  }
+  .hero-headline .line span {
+    display: block;
+    transform: translateY(110%);
+    animation: reveal-up 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  .hero-headline .line:nth-child(1) span { animation-delay: 0.1s; }
+  .hero-headline .line:nth-child(2) span { animation-delay: 0.2s; }
+  .hero-headline .line:nth-child(3) span { animation-delay: 0.3s; }
+  .hero-headline .line:nth-child(4) span { animation-delay: 0.4s; color: var(--gold); }
+  @keyframes reveal-up {
+    to { transform: translateY(0); }
+  }
+  .hero-sub {
+    font-size: 16px;
+    color: rgba(242,242,240,0.55);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fade-in 0.8s 0.7s forwards;
+  }
+  @keyframes fade-in { to { opacity: 1; } }
+  .hero-ctas {
+    display: flex; gap: 20px; align-items: center;
+    opacity: 0;
+    animation: fade-in 0.8s 0.85s forwards;
+  }
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    border: none;
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover {
+    background: var(--gold-lt);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(200,146,42,0.25);
+  }
+  .btn-secondary {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: transparent;
+    border: 1px solid rgba(242,242,240,0.2);
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: border-color 0.25s, color 0.25s, transform 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  /* ─── HERO CAD VISUAL ─── */
+  .hero-right {
+    position: relative;
+    height: 600px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cad-assembly {
+    position: relative;
+    width: 520px; height: 520px;
+  }
+  .cad-glow {
+    position: absolute; inset: -40px;
+    background: radial-gradient(ellipse at center, rgba(200,146,42,0.12) 0%, transparent 65%);
+    animation: glow-pulse 4s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+  .cad-svg {
+    width: 100%; height: 100%;
+    animation: float 8s ease-in-out infinite;
+    opacity: 0;
+    animation: float 8s ease-in-out infinite, cad-reveal 1.2s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-18px) rotate(0.8deg); }
+    66% { transform: translateY(-8px) rotate(-0.5deg); }
+  }
+  @keyframes cad-reveal {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .hero-scroll {
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    opacity: 0;
+    animation: fade-in 0.8s 1.2s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scroll-pulse 2s ease-in-out infinite;
+  }
+  @keyframes scroll-pulse {
+    0%,100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(0.6); }
+  }
+
+  /* ─── SECTION COMMON ─── */
+  section { position: relative; }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-label::before {
+    content: '';
+    width: 28px; height: 1px;
+    background: var(--gold);
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--border);
+    letter-spacing: 0.1em;
+    margin-right: 8px;
+  }
+
+  /* ─── PROCESS ─── */
+  #process {
+    padding: 160px 80px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .process-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; align-items: end;
+    margin-bottom: 100px;
+  }
+  .process-title {
+    font-family: var(--display);
+    font-size: clamp(52px, 5vw, 84px);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+  }
+  .process-desc {
+    font-size: 15px;
+    color: rgba(242,242,240,0.5);
+    line-height: 1.8;
+    max-width: 360px;
+    align-self: end;
+  }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+  }
+  .process-step {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 40px 32px;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    overflow: hidden;
+  }
+  .process-step::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .process-step:hover { border-color: rgba(200,146,42,0.3); background: #1A1A1A; transform: translateY(-4px); }
+  .process-step:hover::before { transform: scaleX(1); }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 48px;
+  }
+  .step-icon {
+    margin-bottom: 24px;
+    width: 44px; height: 44px;
+  }
+  .step-name {
+    font-family: var(--display);
+    font-size: 32px;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .step-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .step-cta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .process-step:hover .step-cta { opacity: 1; }
+  .step-cta-arrow { transition: transform 0.3s; }
+  .step-cta:hover .step-cta-arrow { transform: translateX(4px); }
+  .step-img-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .process-step:hover .step-img-bar { opacity: 0.6; }
+
+  /* ─── SERVICES ─── */
+  #services {
+    padding: 160px 80px;
+    background: var(--charcoal);
+    position: relative; overflow: hidden;
+  }
+  .services-inner { max-width: 1600px; margin: 0 auto; }
+  .services-header { margin-bottom: 80px; }
+  .services-title {
+    font-family: var(--display);
+    font-size: clamp(52px, 5vw, 84px);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .service-card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    height: 340px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .service-card:hover { transform: translateY(-6px); }
+  .service-card-bg {
+    position: absolute; inset: 0;
+    opacity: 0.06;
+    transition: opacity 0.4s;
+  }
+  .service-card:hover .service-card-bg { opacity: 0.12; }
+  .service-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0.2) 100%);
+  }
+  .service-tech-lines {
+    position: absolute; top: 16px; right: 16px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .service-card:hover .service-tech-lines { opacity: 1; }
+  .service-card-content {
+    position: absolute; inset: 0;
+    padding: 32px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .service-number {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.14em;
+  }
+  .service-bottom {}
+  .service-name {
+    font-family: var(--display);
+    font-size: 28px;
+    letter-spacing: 0.04em;
+    line-height: 1.05;
+    margin-bottom: 10px;
+  }
+  .service-tagline {
+    font-size: 13px;
+    color: rgba(242,242,240,0.45);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .service-learn {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .service-card:hover .service-learn { opacity: 1; transform: translateY(0); }
+  .service-border-top {
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .service-card:hover .service-border-top { transform: scaleX(1); }
+
+  /* ─── PROJECTS ─── */
+  #projects {
+    padding: 160px 80px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .projects-header {
+    display: flex; justify-content: space-between; align-items: end;
+    margin-bottom: 80px;
+  }
+  .projects-title {
+    font-family: var(--display);
+    font-size: clamp(52px, 5vw, 84px);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+  }
+  .projects-view-all {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+    transition: gap 0.3s;
+  }
+  .projects-view-all:hover { gap: 16px; }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    grid-template-rows: 420px 300px;
+    gap: 4px;
+  }
+  .project-tile {
+    position: relative;
+    background: var(--card);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .project-tile:nth-child(1) { grid-row: 1 / 2; }
+  .project-tile:nth-child(2) { grid-row: 1 / 3; }
+  .project-tile:nth-child(3) { grid-row: 2 / 3; }
+  .project-tile-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    will-change: transform;
+  }
+  .project-tile:hover .project-tile-bg { transform: scale(1.04); }
+  .project-cad-overlay {
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .project-tile:hover .project-cad-overlay { opacity: 1; }
+  .project-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.1) 60%);
+    transition: background 0.4s;
+  }
+  .project-tile:hover .project-gradient {
+    background: linear-gradient(to top, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0.3) 60%);
+  }
+  .project-info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 36px;
+  }
+  .project-cat {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .project-name {
+    font-family: var(--display);
+    font-size: 36px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .project-meta {
+    display: flex; gap: 24px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .project-tile:hover .project-meta { opacity: 1; transform: translateY(0); }
+  .project-metric {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .metric-val {
+    font-family: var(--display);
+    font-size: 22px;
+    color: var(--gold-lt);
+  }
+  .metric-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .project-cta-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--black);
+    background: var(--gold);
+    padding: 8px 18px;
+    text-transform: uppercase;
+    text-decoration: none;
+    margin-top: 16px;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: opacity 0.4s 0.05s, transform 0.4s 0.05s;
+  }
+  .project-tile:hover .project-cta-pill { opacity: 1; transform: translateY(0); }
+
+  /* ─── CASE STUDY ─── */
+  #case-study {
+    padding: 160px 80px;
+    background: var(--charcoal);
+    position: relative; overflow: hidden;
+  }
+  .case-inner { max-width: 1600px; margin: 0 auto; }
+  .case-header { margin-bottom: 80px; }
+  .case-client {
+    font-family: var(--display);
+    font-size: clamp(60px, 6vw, 100px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+  .case-client span { color: var(--gold); }
+  .case-subtitle {
+    font-size: 15px;
+    color: rgba(242,242,240,0.5);
+    margin-top: 20px;
+    max-width: 500px;
+    line-height: 1.7;
+  }
+  .case-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .case-phases { display: flex; flex-direction: column; gap: 0; }
+  .case-phase {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 32px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .case-phase:hover { padding-left: 12px; border-top-color: var(--gold); }
+  .phase-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .phase-content {}
+  .phase-title {
+    font-family: var(--display);
+    font-size: 24px;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+  .phase-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .case-visuals { position: sticky; top: 120px; }
+  .case-main-visual {
+    background: var(--card);
+    border: 1px solid var(--border);
+    height: 460px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .case-visual-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .case-visual-sm {
+    background: var(--card);
+    border: 1px solid var(--border);
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .case-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; margin-top: 4px;
+  }
+  .case-metric {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+  }
+  .case-metric-val {
+    font-family: var(--display);
+    font-size: 38px;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+  }
+  .case-metric-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .case-cta-wrap { margin-top: 60px; }
+
+  /* ─── 3D VIEWER ─── */
+  #viewer {
+    padding: 160px 80px;
+    position: relative; overflow: hidden;
+    background: var(--black);
+  }
+  .viewer-inner { max-width: 1600px; margin: 0 auto; }
+  .viewer-header {
+    text-align: center; margin-bottom: 60px;
+  }
+  .viewer-title {
+    font-family: var(--display);
+    font-size: clamp(52px, 5vw, 84px);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+  }
+  .viewer-subtitle {
+    font-size: 15px;
+    color: rgba(242,242,240,0.4);
+    margin-top: 16px;
+  }
+  .viewer-stage {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    height: 600px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .viewer-grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,146,42,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,146,42,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .viewer-model {
+    position: relative; z-index: 2;
+    width: 480px; height: 480px;
+    animation: slow-rotate 20s linear infinite;
+  }
+  @keyframes slow-rotate {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+  }
+  .viewer-controls {
+    position: absolute; left: 32px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 4px;
+    z-index: 10;
+  }
+  .viewer-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    background: rgba(22,22,22,0.9);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    text-align: left;
+  }
+  .viewer-btn:hover, .viewer-btn.active { color: var(--gold); border-color: var(--gold); }
+  .viewer-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+  }
+  .viewer-corner-tl { top: 16px; left: 16px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+  .viewer-corner-tr { top: 16px; right: 16px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+  .viewer-corner-bl { bottom: 16px; left: 16px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+  .viewer-corner-br { bottom: 16px; right: 16px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+  .viewer-cta {
+    text-align: center; margin-top: 48px;
+  }
+
+  /* ─── ABOUT ─── */
+  #about {
+    padding: 160px 80px;
+    background: var(--charcoal);
+    position: relative; overflow: hidden;
+  }
+  .about-inner {
+    max-width: 1600px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 100px; align-items: center;
+  }
+  .about-left {}
+  .about-manifesto {
+    font-family: var(--display);
+    font-size: clamp(40px, 4vw, 64px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 48px;
+  }
+  .about-manifesto em { color: var(--gold); font-style: normal; }
+  .about-body {
+    font-size: 15px;
+    color: rgba(242,242,240,0.5);
+    line-height: 1.8;
+    max-width: 420px;
+    margin-bottom: 60px;
+  }
+  .about-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+  }
+  .about-stat {}
+  .stat-val {
+    font-family: var(--display);
+    font-size: 52px;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .about-right { position: relative; }
+  .about-photo-frame {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    height: 580px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-frame-corner {
+    position: absolute;
+    width: 30px; height: 30px;
+  }
+  .about-frame-corner.tl { top: 20px; left: 20px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .about-frame-corner.tr { top: 20px; right: 20px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+  .about-frame-corner.bl { bottom: 20px; left: 20px; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .about-frame-corner.br { bottom: 20px; right: 20px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+  .about-badge {
+    position: absolute; bottom: 32px; left: 32px;
+    background: rgba(8,8,8,0.9);
+    border: 1px solid var(--border);
+    padding: 16px 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ─── FINAL CTA ─── */
+  #final-cta {
+    position: relative;
+    min-height: 700px;
+    display: flex; align-items: center;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .final-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 90% at 50% 50%, rgba(200,146,42,0.06) 0%, transparent 65%),
+      linear-gradient(135deg, var(--black) 0%, #0E0E0E 100%);
+  }
+  .final-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,146,42,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,146,42,0.04) 1px, transparent 1px);
+    background-size: 100px 100px;
+  }
+  .final-content {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 1600px;
+    margin: 0 auto; padding: 0 80px;
+    text-align: center;
+  }
+  .final-headline {
+    font-family: var(--display);
+    font-size: clamp(72px, 9vw, 140px);
+    line-height: 0.88;
+    letter-spacing: 0.02em;
+    margin-bottom: 40px;
+  }
+  .final-steps {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+  }
+  .final-step {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: rgba(242,242,240,0.35);
+    text-transform: uppercase;
+  }
+  .final-sep {
+    color: var(--gold);
+    font-size: 18px;
+    line-height: 1;
+  }
+  .final-ctas {
+    display: flex; gap: 20px; justify-content: center; align-items: center;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--black);
+    border-top: 1px solid var(--border);
+    padding: 60px 80px 40px;
+  }
+  .footer-inner {
+    max-width: 1600px; margin: 0 auto;
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-brand {}
+  .footer-logo {
+    font-family: var(--display);
+    font-size: 28px;
+    letter-spacing: 0.1em;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-tagline {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    margin-bottom: 24px;
+  }
+  .footer-col-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .footer-links a:hover { color: var(--white); }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .footer-legal {
+    display: flex; gap: 24px;
+  }
+  .footer-legal a {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+  .footer-legal a:hover { color: var(--gold); }
+
+  /* ─── UTILITIES ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* Blueprint background accents */
+  .blueprint-accent {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.03;
+  }
+
+  /* Animated gradient border */
+  @keyframes border-glow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">CINE<span>FN</span><span class="nav-logo-dot"></span></a>
+  <ul class="nav-links">
+    <li><a href="#process">Process</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#projects">Work</a></li>
+    <li><a href="#about">Studio</a></li>
+  </ul>
+  <a href="#final-cta" class="nav-cta">Start a Project</a>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Product Development &amp; Media Studio</div>
+      <h1 class="hero-headline">
+        <span class="line"><span>DESIGN IT.</span></span>
+        <span class="line"><span>ENGINEER IT.</span></span>
+        <span class="line"><span>BUILD IT.</span></span>
+        <span class="line"><span>FILM IT.</span></span>
+      </h1>
+      <p class="hero-sub">From concept sketches to production-ready products and cinematic content — we help brands bring ideas to life with precision engineering and visual storytelling.</p>
+      <div class="hero-ctas">
+        <a href="#final-cta" class="btn-primary">Start a Project</a>
+        <a href="#projects" class="btn-secondary">View Our Work &#8594;</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="cad-assembly">
+        <div class="cad-glow"></div>
+        <svg class="cad-svg" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Exploded CAD Assembly -->
+          <!-- Main body -->
+          <g opacity="0.9">
+            <!-- Outer ring -->
+            <circle cx="260" cy="260" r="180" stroke="rgba(200,146,42,0.25)" stroke-width="1" stroke-dasharray="8 4"/>
+            <circle cx="260" cy="260" r="140" stroke="rgba(200,146,42,0.15)" stroke-width="0.5" stroke-dasharray="4 8"/>
+            <!-- Center assembly -->
+            <rect x="180" y="180" width="160" height="160" rx="4" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.02)"/>
+            <!-- Cross hairs -->
+            <line x1="260" y1="120" x2="260" y2="400" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="6 6"/>
+            <line x1="120" y1="260" x2="400" y2="260" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="6 6"/>
+            <!-- Inner part -->
+            <rect x="215" y="215" width="90" height="90" rx="2" stroke="rgba(200,146,42,0.8)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+            <rect x="235" y="235" width="50" height="50" rx="1" stroke="rgba(200,146,42,1)" stroke-width="1.5" fill="rgba(200,146,42,0.08)"/>
+            <circle cx="260" cy="260" r="12" stroke="rgba(200,146,42,0.9)" stroke-width="1.5" fill="rgba(200,146,42,0.15)"/>
+            <circle cx="260" cy="260" r="4" fill="rgba(200,146,42,0.8)"/>
+            <!-- Exploded parts floating -->
+            <!-- Top part -->
+            <g transform="translate(0,-60)">
+              <rect x="220" y="155" width="80" height="30" rx="2" stroke="rgba(200,146,42,0.55)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+              <line x1="220" y1="185" x2="220" y2="205" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="3 3"/>
+              <line x1="300" y1="185" x2="300" y2="205" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="3 3"/>
+            </g>
+            <!-- Right part -->
+            <g transform="translate(70,0)">
+              <rect x="295" y="225" width="30" height="70" rx="2" stroke="rgba(200,146,42,0.55)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+              <line x1="295" y1="260" x2="270" y2="260" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="3 3"/>
+            </g>
+            <!-- Bottom part -->
+            <g transform="translate(0,65)">
+              <rect x="215" y="320" width="90" height="25" rx="2" stroke="rgba(200,146,42,0.55)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+              <line x1="260" y1="320" x2="260" y2="310" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="3 3"/>
+            </g>
+            <!-- Left part -->
+            <g transform="translate(-68,0)">
+              <rect x="168" y="235" width="28" height="55" rx="2" stroke="rgba(200,146,42,0.55)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+              <line x1="196" y1="262" x2="215" y2="262" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="3 3"/>
+            </g>
+            <!-- Corner detail bolts -->
+            <circle cx="192" cy="192" r="4" stroke="rgba(200,146,42,0.5)" stroke-width="1" fill="none"/>
+            <circle cx="328" cy="192" r="4" stroke="rgba(200,146,42,0.5)" stroke-width="1" fill="none"/>
+            <circle cx="192" cy="328" r="4" stroke="rgba(200,146,42,0.5)" stroke-width="1" fill="none"/>
+            <circle cx="328" cy="328" r="4" stroke="rgba(200,146,42,0.5)" stroke-width="1" fill="none"/>
+            <!-- Dimension lines -->
+            <line x1="150" y1="180" x2="150" y2="340" stroke="rgba(200,146,42,0.18)" stroke-width="0.5"/>
+            <line x1="145" y1="180" x2="155" y2="180" stroke="rgba(200,146,42,0.18)" stroke-width="0.5"/>
+            <line x1="145" y1="340" x2="155" y2="340" stroke="rgba(200,146,42,0.18)" stroke-width="0.5"/>
+            <line x1="180" y1="148" x2="340" y2="148" stroke="rgba(200,146,42,0.18)" stroke-width="0.5"/>
+            <line x1="180" y1="143" x2="180" y2="153" stroke="rgba(200,146,42,0.18)" stroke-width="0.5"/>
+            <line x1="340" y1="143" x2="340" y2="153" stroke="rgba(200,146,42,0.18)" stroke-width="0.5"/>
+            <!-- Labels -->
+            <text x="135" y="265" fill="rgba(200,146,42,0.5)" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle" transform="rotate(-90,135,265)">160.0mm</text>
+            <text x="260" y="138" fill="rgba(200,146,42,0.5)" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle">160.0mm</text>
+            <!-- Scanning lines animation -->
+            <rect x="180" y="180" width="160" height="2" fill="rgba(200,146,42,0.4)">
+              <animate attributeName="y" values="180;340;180" dur="4s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.4;0.05;0.4" dur="4s" repeatCount="indefinite"/>
+            </rect>
+          </g>
+          <!-- Blueprint ref box -->
+          <rect x="16" y="16" width="100" height="52" rx="1" stroke="rgba(200,146,42,0.12)" stroke-width="0.5" fill="none"/>
+          <text x="24" y="32" fill="rgba(200,146,42,0.3)" font-family="JetBrains Mono, monospace" font-size="7">CINEFN STUDIO</text>
+          <text x="24" y="44" fill="rgba(200,146,42,0.2)" font-family="JetBrains Mono, monospace" font-size="7">ASSY-001-REV-C</text>
+          <text x="24" y="56" fill="rgba(200,146,42,0.2)" font-family="JetBrains Mono, monospace" font-size="7">SCALE 1:1</text>
+          <!-- Top right status -->
+          <text x="400" y="32" fill="rgba(200,146,42,0.25)" font-family="JetBrains Mono, monospace" font-size="8">SolidWorks 2024</text>
+          <circle cx="504" cy="28" r="3" fill="rgba(200,146,42,0.6)">
+            <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- ─── PROCESS ─── -->
+<section id="process">
+  <div style="max-width:1600px;margin:0 auto;padding:160px 80px;">
+    <div class="process-header reveal">
+      <div>
+        <div class="section-label"><span class="section-num">02</span> Methodology</div>
+        <h2 class="process-title">FROM<br>CONCEPT<br><span style="color:var(--gold)">TO CAMERA</span></h2>
+      </div>
+      <p class="process-desc">Every project follows a disciplined pipeline — from whiteboard to warehouse, from prototype to prime time. This isn't a linear process; it's a system engineered for results.</p>
+    </div>
+
+    <div class="process-steps">
+      <!-- 01 CONCEPT -->
+      <div class="process-step reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <svg class="step-icon" viewBox="0 0 44 44" fill="none">
+          <rect x="4" y="8" width="28" height="28" rx="2" stroke="rgba(200,146,42,0.7)" stroke-width="1.2"/>
+          <line x1="4" y1="16" x2="32" y2="16" stroke="rgba(200,146,42,0.4)" stroke-width="0.8"/>
+          <line x1="10" y1="22" x2="26" y2="22" stroke="rgba(200,146,42,0.3)" stroke-width="0.8"/>
+          <line x1="10" y1="26" x2="22" y2="26" stroke="rgba(200,146,42,0.3)" stroke-width="0.8"/>
+          <path d="M30 6 L38 14 L36 16 L28 8 Z" fill="rgba(200,146,42,0.6)"/>
+          <circle cx="36" cy="8" r="3" stroke="rgba(200,146,42,0.8)" stroke-width="1" fill="none"/>
+        </svg>
+        <div class="step-name">CONCEPT</div>
+        <p class="step-desc">Ideation, sketching, and visual roadmapping. We translate business goals into engineering briefs and creative direction.</p>
+        <a href="#" class="step-cta">Explore <span class="step-cta-arrow">&#8594;</span></a>
+        <div class="step-img-bar"></div>
+      </div>
+
+      <!-- 02 ENGINEER -->
+      <div class="process-step reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <svg class="step-icon" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="22" r="14" stroke="rgba(200,146,42,0.6)" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <circle cx="22" cy="22" r="8" stroke="rgba(200,146,42,0.8)" stroke-width="1.2"/>
+          <circle cx="22" cy="22" r="3" fill="rgba(200,146,42,0.9)"/>
+          <line x1="22" y1="4" x2="22" y2="10" stroke="rgba(200,146,42,0.5)" stroke-width="1.2"/>
+          <line x1="22" y1="34" x2="22" y2="40" stroke="rgba(200,146,42,0.5)" stroke-width="1.2"/>
+          <line x1="4" y1="22" x2="10" y2="22" stroke="rgba(200,146,42,0.5)" stroke-width="1.2"/>
+          <line x1="34" y1="22" x2="40" y2="22" stroke="rgba(200,146,42,0.5)" stroke-width="1.2"/>
+        </svg>
+        <div class="step-name">ENGINEER</div>
+        <p class="step-desc">Precision 3D modeling, FEA simulation, GD&amp;T tolerancing, and design for manufacturability — built to spec.</p>
+        <a href="#" class="step-cta">Explore <span class="step-cta-arrow">&#8594;</span></a>
+        <div class="step-img-bar"></div>
+      </div>
+
+      <!-- 03 BUILD -->
+      <div class="process-step reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <svg class="step-icon" viewBox="0 0 44 44" fill="none">
+          <rect x="8" y="18" width="28" height="18" rx="1" stroke="rgba(200,146,42,0.7)" stroke-width="1.2"/>
+          <rect x="14" y="12" width="16" height="8" rx="1" stroke="rgba(200,146,42,0.5)" stroke-width="1"/>
+          <rect x="18" y="8" width="8" height="6" rx="1" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <line x1="16" y1="26" x2="16" y2="32" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <line x1="22" y1="26" x2="22" y2="32" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <line x1="28" y1="26" x2="28" y2="32" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="step-name">BUILD</div>
+        <p class="step-desc">SLA/FDM/SLS prototyping, CNC machining, surface finishing, and full manufacturing oversight from first article to production run.</p>
+        <a href="#" class="step-cta">Explore <span class="step-cta-arrow">&#8594;</span></a>
+        <div class="step-img-bar"></div>
+      </div>
+
+      <!-- 04 CAPTURE -->
+      <div class="process-step reveal reveal-delay-4">
+        <div class="step-num">04</div>
+        <svg class="step-icon" viewBox="0 0 44 44" fill="none">
+          <rect x="6" y="12" width="32" height="22" rx="3" stroke="rgba(200,146,42,0.7)" stroke-width="1.2"/>
+          <circle cx="22" cy="23" r="7" stroke="rgba(200,146,42,0.8)" stroke-width="1.2"/>
+          <circle cx="22" cy="23" r="3" fill="rgba(200,146,42,0.5)"/>
+          <rect x="16" y="7" width="6" height="5" rx="1" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <circle cx="34" cy="16" r="2" fill="rgba(200,146,42,0.7)">
+            <animate attributeName="opacity" values="0.7;0.1;0.7" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+        <div class="step-name">CAPTURE</div>
+        <p class="step-desc">Cinematic product photography, commercial video, and content production that makes every product unforgettable.</p>
+        <a href="#" class="step-cta">Explore <span class="step-cta-arrow">&#8594;</span></a>
+        <div class="step-img-bar"></div>
+      </div>
+
+      <!-- 05 LAUNCH -->
+      <div class="process-step reveal reveal-delay-4">
+        <div class="step-num">05</div>
+        <svg class="step-icon" viewBox="0 0 44 44" fill="none">
+          <path d="M22 6 L28 22 L22 38 L16 22 Z" stroke="rgba(200,146,42,0.6)" stroke-width="1.2" fill="rgba(200,146,42,0.04)"/>
+          <path d="M6 22 L22 16 L38 22 L22 28 Z" stroke="rgba(200,146,42,0.6)" stroke-width="1.2" fill="rgba(200,146,42,0.04)"/>
+          <circle cx="22" cy="22" r="4" fill="rgba(200,146,42,0.8)"/>
+          <line x1="34" y1="10" x2="38" y2="6" stroke="rgba(200,146,42,0.5)" stroke-width="1"/>
+          <circle cx="38" cy="6" r="2" fill="rgba(200,146,42,0.6)"/>
+        </svg>
+        <div class="step-name">LAUNCH</div>
+        <p class="step-desc">Brand storytelling, campaign assets, e-commerce media, and go-to-market materials that drive conversions from day one.</p>
+        <a href="#" class="step-cta">Explore <span class="step-cta-arrow">&#8594;</span></a>
+        <div class="step-img-bar"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SERVICES ─── -->
+<section id="services">
+  <div class="services-inner">
+    <div class="services-header reveal">
+      <div class="section-label"><span class="section-num">03</span> Capabilities</div>
+      <h2 class="services-title">WHAT WE<br><span style="color:var(--gold)">BUILD FOR YOU</span></h2>
+    </div>
+
+    <div class="services-grid">
+      <!-- 3D Design -->
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-bg" style="background:linear-gradient(135deg,rgba(200,146,42,0.15),transparent);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <circle cx="150" cy="170" r="100" stroke="rgba(200,146,42,0.15)" stroke-width="1" stroke-dasharray="6 4"/>
+            <circle cx="150" cy="170" r="60" stroke="rgba(200,146,42,0.1)" stroke-width="0.5"/>
+            <rect x="100" y="120" width="100" height="100" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-tech-lines">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect x="2" y="2" width="56" height="56" stroke="rgba(200,146,42,0.4)" stroke-width="0.5"/>
+            <line x1="2" y1="20" x2="58" y2="20" stroke="rgba(200,146,42,0.2)" stroke-width="0.5"/>
+            <line x1="20" y1="2" x2="20" y2="58" stroke="rgba(200,146,42,0.2)" stroke-width="0.5"/>
+            <circle cx="30" cy="30" r="10" stroke="rgba(200,146,42,0.5)" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">01</div>
+          <div class="service-bottom">
+            <div class="service-name">3D DESIGN &amp; ENGINEERING</div>
+            <p class="service-tagline">SolidWorks. Fusion 360. From napkin sketch to production-ready CAD.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reverse Engineering -->
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-bg" style="background:linear-gradient(135deg,rgba(42,100,200,0.08),transparent);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <path d="M50 170 Q150 80 250 170 Q150 260 50 170Z" stroke="rgba(200,146,42,0.12)" stroke-width="1" fill="none"/>
+            <path d="M80 170 Q150 110 220 170 Q150 230 80 170Z" stroke="rgba(200,146,42,0.15)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-tech-lines">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="30" r="24" stroke="rgba(200,146,42,0.4)" stroke-width="0.5" stroke-dasharray="4 3"/>
+            <path d="M15 30 Q30 10 45 30 Q30 50 15 30Z" stroke="rgba(200,146,42,0.5)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">02</div>
+          <div class="service-bottom">
+            <div class="service-name">REVERSE ENGINEERING</div>
+            <p class="service-tagline">Digitize existing parts. Recreate legacy components. Improve on original designs.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Scanning -->
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-card-bg" style="background:linear-gradient(135deg,rgba(200,42,42,0.06),transparent);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <rect x="80" y="100" width="140" height="140" stroke="rgba(200,146,42,0.12)" stroke-width="1" fill="none"/>
+            <line x1="0" y1="170" x2="300" y2="170" stroke="rgba(200,146,42,0.2)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-tech-lines">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <rect x="10" y="10" width="40" height="40" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>
+            <line x1="0" y1="30" x2="60" y2="30" stroke="rgba(200,146,42,0.6)" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">03</div>
+          <div class="service-bottom">
+            <div class="service-name">3D SCANNING</div>
+            <p class="service-tagline">Structured light and photogrammetry scanning to 0.05mm accuracy.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prototyping -->
+      <div class="service-card reveal reveal-delay-4">
+        <div class="service-card-bg" style="background:linear-gradient(135deg,rgba(42,200,100,0.06),transparent);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <polygon points="150,80 230,170 200,270 100,270 70,170" stroke="rgba(200,146,42,0.12)" stroke-width="1" fill="none"/>
+            <polygon points="150,120 200,175 180,240 120,240 100,175" stroke="rgba(200,146,42,0.1)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-tech-lines">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <polygon points="30,8 50,30 42,52 18,52 10,30" stroke="rgba(200,146,42,0.5)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">04</div>
+          <div class="service-bottom">
+            <div class="service-name">PROTOTYPING</div>
+            <p class="service-tagline">SLA, FDM, SLS, urethane casting, and CNC prototyping for validation and presentation.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manufacturing -->
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-card-bg" style="background:linear-gradient(135deg,rgba(200,146,42,0.08),transparent);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <rect x="60" y="140" width="60" height="60" stroke="rgba(200,146,42,0.12)" stroke-width="1" fill="none"/>
+            <rect x="130" y="120" width="60" height="80" stroke="rgba(200,146,42,0.1)" stroke-width="1" fill="none"/>
+            <rect x="200" y="150" width="50" height="50" stroke="rgba(200,146,42,0.1)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">05</div>
+          <div class="service-bottom">
+            <div class="service-name">MANUFACTURING SUPPORT</div>
+            <p class="service-tagline">DFM analysis, supplier vetting, quality control, and first article inspection.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photography -->
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-card-bg" style="background:radial-gradient(ellipse at 50% 50%, rgba(200,146,42,0.1),transparent 70%);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <circle cx="150" cy="170" r="80" stroke="rgba(200,146,42,0.15)" stroke-width="1"/>
+            <circle cx="150" cy="170" r="50" stroke="rgba(200,146,42,0.12)" stroke-width="0.5"/>
+            <circle cx="150" cy="170" r="20" stroke="rgba(200,146,42,0.2)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">06</div>
+          <div class="service-bottom">
+            <div class="service-name">PRODUCT PHOTOGRAPHY</div>
+            <p class="service-tagline">Studio-lit, hero-shot, lifestyle, and 360° product imagery built to convert.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commercial Video -->
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-card-bg" style="background:linear-gradient(135deg,rgba(100,42,200,0.07),transparent);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <rect x="60" y="120" width="180" height="110" rx="4" stroke="rgba(200,146,42,0.12)" stroke-width="1" fill="none"/>
+            <polygon points="140,150 180,175 140,200" fill="rgba(200,146,42,0.12)"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">07</div>
+          <div class="service-bottom">
+            <div class="service-name">COMMERCIAL VIDEO</div>
+            <p class="service-tagline">Cinematic brand films, product launches, and broadcast commercials in 4K–8K.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Creation -->
+      <div class="service-card reveal reveal-delay-4">
+        <div class="service-card-bg" style="background:linear-gradient(135deg,rgba(42,200,200,0.06),transparent);">
+          <svg width="100%" height="100%" viewBox="0 0 300 340" fill="none" style="position:absolute;inset:0;">
+            <path d="M60 200 Q100 130 140 170 Q180 210 220 130 Q260 60 280 140" stroke="rgba(200,146,42,0.2)" stroke-width="1" fill="none"/>
+            <circle cx="140" cy="170" r="6" fill="rgba(200,146,42,0.3)"/>
+          </svg>
+        </div>
+        <div class="service-overlay"></div>
+        <div class="service-border-top"></div>
+        <div class="service-card-content">
+          <div class="service-number">08</div>
+          <div class="service-bottom">
+            <div class="service-name">CONTENT &amp; BRAND STORY</div>
+            <p class="service-tagline">Social content, brand identity, and storytelling that builds loyal audiences at scale.</p>
+            <a href="#" class="service-learn">Learn More &#8594;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROJECTS ─── -->
+<section id="projects">
+  <div style="max-width:1600px;margin:0 auto;padding:160px 80px;">
+    <div class="projects-header reveal">
+      <div>
+        <div class="section-label"><span class="section-num">04</span> Selected Work</div>
+        <h2 class="projects-title">FEATURED<br><span style="color:var(--gold)">PROJECTS</span></h2>
+      </div>
+      <a href="#" class="projects-view-all">View All Work &#8594;</a>
+    </div>
+
+    <div class="projects-grid">
+      <!-- Large tile -->
+      <div class="project-tile reveal">
+        <div class="project-tile-bg" style="background:linear-gradient(135deg,#1a1a1a,#0d0d0d);display:flex;align-items:center;justify-content:center;">
+          <svg width="60%" height="60%" viewBox="0 0 400 280" fill="none">
+            <!-- DYME Fluid line assembly visual -->
+            <rect x="40" y="100" width="320" height="80" rx="40" stroke="rgba(200,146,42,0.3)" stroke-width="2" fill="rgba(200,146,42,0.03)"/>
+            <rect x="80" y="115" width="240" height="50" rx="25" stroke="rgba(200,146,42,0.5)" stroke-width="1.5" fill="rgba(200,146,42,0.06)"/>
+            <circle cx="130" cy="140" r="18" stroke="rgba(200,146,42,0.7)" stroke-width="1.5" fill="rgba(200,146,42,0.1)"/>
+            <circle cx="270" cy="140" r="18" stroke="rgba(200,146,42,0.7)" stroke-width="1.5" fill="rgba(200,146,42,0.1)"/>
+            <circle cx="200" cy="140" r="10" fill="rgba(200,146,42,0.4)"/>
+            <!-- connectors -->
+            <rect x="20" y="128" width="62" height="24" rx="12" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+            <rect x="318" y="128" width="62" height="24" rx="12" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+            <!-- Dim lines -->
+            <line x1="40" y1="80" x2="360" y2="80" stroke="rgba(200,146,42,0.15)" stroke-width="0.5"/>
+            <line x1="40" y1="75" x2="40" y2="85" stroke="rgba(200,146,42,0.15)" stroke-width="0.5"/>
+            <line x1="360" y1="75" x2="360" y2="85" stroke="rgba(200,146,42,0.15)" stroke-width="0.5"/>
+            <text x="200" y="73" text-anchor="middle" fill="rgba(200,146,42,0.3)" font-family="JetBrains Mono,monospace" font-size="9">320.0mm</text>
+          </svg>
+        </div>
+        <div class="project-cad-overlay">
+          <svg width="100%" height="100%" viewBox="0 0 700 420" fill="none" style="position:absolute;inset:0;">
+            <line x1="0" y1="210" x2="700" y2="210" stroke="rgba(200,146,42,0.08)" stroke-width="1" stroke-dasharray="8 6"/>
+            <line x1="350" y1="0" x2="350" y2="420" stroke="rgba(200,146,42,0.08)" stroke-width="1" stroke-dasharray="8 6"/>
+            <rect x="10" y="10" width="680" height="400" stroke="rgba(200,146,42,0.1)" stroke-width="0.5" fill="none"/>
+          </svg>
+        </div>
+        <div class="project-gradient"></div>
+        <div class="project-info">
+          <div class="project-cat">Product Development / Industrial</div>
+          <div class="project-name">DYME PERFORMANCE</div>
+          <div class="project-meta">
+            <div class="project-metric"><span class="metric-val">48</span><span class="metric-label">Parts Engineered</span></div>
+            <div class="project-metric"><span class="metric-val">6</span><span class="metric-label">Month Timeline</span></div>
+            <div class="project-metric"><span class="metric-val">3x</span><span class="metric-label">Sales Growth</span></div>
+          </div>
+          <a href="#" class="project-cta-pill">View Case Study &#8594;</a>
+        </div>
+      </div>
+
+      <!-- Tall right tile -->
+      <div class="project-tile reveal reveal-delay-2">
+        <div class="project-tile-bg" style="background:linear-gradient(180deg,#141414,#0a0a0a);display:flex;align-items:center;justify-content:center;">
+          <svg width="70%" height="70%" viewBox="0 0 300 480" fill="none">
+            <!-- Automotive silhouette CAD -->
+            <path d="M30 340 Q30 300 60 290 L80 220 Q100 160 160 150 Q220 140 240 160 L260 220 L280 290 Q300 300 300 340 L300 360 L30 360 Z" stroke="rgba(200,146,42,0.4)" stroke-width="1.5" fill="rgba(200,146,42,0.03)"/>
+            <path d="M80 290 Q80 260 100 250 L100 220 Q110 180 160 175 Q210 170 220 195 L220 250 Q240 258 240 290" stroke="rgba(200,146,42,0.25)" stroke-width="1" fill="none"/>
+            <circle cx="95" cy="345" r="22" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.06)"/>
+            <circle cx="95" cy="345" r="12" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.08)"/>
+            <circle cx="235" cy="345" r="22" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.06)"/>
+            <circle cx="235" cy="345" r="12" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.08)"/>
+            <text x="150" y="420" text-anchor="middle" fill="rgba(200,146,42,0.25)" font-family="JetBrains Mono,monospace" font-size="8">AUTOMOTIVE MEDIA</text>
+          </svg>
+        </div>
+        <div class="project-cad-overlay">
+          <svg width="100%" height="100%" fill="none" style="position:absolute;inset:0;">
+            <circle cx="50%" cy="50%" r="180" stroke="rgba(200,146,42,0.1)" stroke-width="1" stroke-dasharray="8 6"/>
+          </svg>
+        </div>
+        <div class="project-gradient"></div>
+        <div class="project-info">
+          <div class="project-cat">Automotive / Media</div>
+          <div class="project-name">AUTOMOTIVE PRODUCTION</div>
+          <div class="project-meta">
+            <div class="project-metric"><span class="metric-val">4K</span><span class="metric-label">Resolution</span></div>
+            <div class="project-metric"><span class="metric-val">2</span><span class="metric-label">Day Shoot</span></div>
+          </div>
+          <a href="#" class="project-cta-pill">View Case Study &#8594;</a>
+        </div>
+      </div>
+
+      <!-- Bottom left tile -->
+      <div class="project-tile reveal reveal-delay-3">
+        <div class="project-tile-bg" style="background:linear-gradient(135deg,#111111,#0d0d0d);display:flex;align-items:center;justify-content:center;">
+          <svg width="60%" height="80%" viewBox="0 0 400 200" fill="none">
+            <!-- Restaurant brand visual -->
+            <rect x="80" y="40" width="240" height="120" rx="2" stroke="rgba(200,146,42,0.3)" stroke-width="1.5" fill="rgba(200,146,42,0.02)"/>
+            <text x="200" y="95" text-anchor="middle" fill="rgba(200,146,42,0.5)" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="8">MONOGRAM</text>
+            <line x1="100" y1="108" x2="300" y2="108" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>
+            <text x="200" y="125" text-anchor="middle" fill="rgba(200,146,42,0.25)" font-family="JetBrains Mono,monospace" font-size="7" letter-spacing="4">RESTAURANT &amp; HOSPITALITY</text>
+          </svg>
+        </div>
+        <div class="project-gradient"></div>
+        <div class="project-info">
+          <div class="project-cat">Brand Identity / Hospitality</div>
+          <div class="project-name">RESTAURANT BRANDING</div>
+          <div class="project-meta">
+            <div class="project-metric"><span class="metric-val">12</span><span class="metric-label">Deliverables</span></div>
+          </div>
+          <a href="#" class="project-cta-pill">View Case Study &#8594;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CASE STUDY ─── -->
+<section id="case-study">
+  <div class="case-inner">
+    <div class="case-header reveal">
+      <div class="section-label"><span class="section-num">05</span> Deep Dive</div>
+      <div class="case-client">DYME <span>PSI</span></div>
+      <p class="case-subtitle">A full-stack product development engagement: engineered from scratch, manufactured to spec, and launched with cinematic media that redefined the category.</p>
+    </div>
+
+    <div class="case-body">
+      <div class="case-phases reveal">
+        <div class="case-phase">
+          <div class="phase-label">Challenge</div>
+          <div class="phase-content">
+            <div class="phase-title">REINVENT THE FLUID LINE</div>
+            <p class="phase-desc">The client needed a premium motorsport fluid transfer system to compete against Goodridge — requiring new industrial design, engineering, and a full visual identity to support launch.</p>
+          </div>
+        </div>
+        <div class="case-phase">
+          <div class="phase-label">Engineering</div>
+          <div class="phase-content">
+            <div class="phase-title">48 COMPONENTS, ONE VISION</div>
+            <p class="phase-desc">Full CAD modeling in SolidWorks, FEA pressure simulation to 5,000 PSI, GD&amp;T documentation, and DFM review with manufacturing partners across three countries.</p>
+          </div>
+        </div>
+        <div class="case-phase">
+          <div class="phase-label">Prototype</div>
+          <div class="phase-content">
+            <div class="phase-title">VALIDATE BEFORE TOOLING</div>
+            <p class="phase-desc">Three rapid prototype iterations using SLA resin and CNC-machined aluminum. Each cycle refined fit, finish, and ergonomics before committing to production tooling.</p>
+          </div>
+        </div>
+        <div class="case-phase">
+          <div class="phase-label">Manufacturing</div>
+          <div class="phase-content">
+            <div class="phase-title">FROM PROTOTYPE TO PRODUCTION</div>
+            <p class="phase-desc">First article inspection, tolerance stack analysis, and ongoing quality oversight through the production run. 100% in-spec first shipment delivery.</p>
+          </div>
+        </div>
+        <div class="case-phase">
+          <div class="phase-label">Content Production</div>
+          <div class="phase-content">
+            <div class="phase-title">CINEMATIC LAUNCH CAMPAIGN</div>
+            <p class="phase-desc">4K product photography, 60-second commercial, and 12 social content pieces. Shot in a controlled industrial studio environment with cinematic lighting and precision staging.</p>
+          </div>
+        </div>
+        <div class="case-phase">
+          <div class="phase-label">Results</div>
+          <div class="phase-content">
+            <div class="phase-title">MARKET ENTRY SUCCESS</div>
+            <p class="phase-desc">Launched to immediate industry recognition. Secured placement with professional racing teams within 90 days of launch with all media assets deployed.</p>
+          </div>
+        </div>
+        <div style="padding-top:40px;">
+          <a href="#final-cta" class="btn-primary">Start a Similar Project</a>
+        </div>
+      </div>
+
+      <div class="case-visuals reveal reveal-delay-2">
+        <div class="case-main-visual">
+          <svg width="80%" height="80%" viewBox="0 0 400 300" fill="none">
+            <!-- Exploded fluid line assembly -->
+            <g opacity="0.9">
+              <rect x="20" y="120" width="360" height="60" rx="30" stroke="rgba(200,146,42,0.35)" stroke-width="1.5" fill="rgba(200,146,42,0.03)"/>
+              <rect x="60" y="133" width="280" height="34" rx="17" stroke="rgba(200,146,42,0.5)" stroke-width="1" fill="rgba(200,146,42,0.05)"/>
+              <!-- Left end cap - exploded -->
+              <g transform="translate(-50,0)">
+                <circle cx="60" cy="150" r="20" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.08)"/>
+                <circle cx="60" cy="150" r="10" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.06)"/>
+                <line x1="80" y1="150" x2="110" y2="150" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="4 3"/>
+              </g>
+              <!-- Right end cap - exploded -->
+              <g transform="translate(50,0)">
+                <circle cx="340" cy="150" r="20" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.08)"/>
+                <circle cx="340" cy="150" r="10" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.06)"/>
+                <line x1="290" y1="150" x2="320" y2="150" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="4 3"/>
+              </g>
+              <!-- Center fitting - exploded up -->
+              <g transform="translate(0,-40)">
+                <rect x="180" y="80" width="40" height="32" rx="4" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.06)"/>
+                <line x1="200" y1="112" x2="200" y2="130" stroke="rgba(200,146,42,0.2)" stroke-width="0.5" stroke-dasharray="4 3"/>
+              </g>
+              <!-- Knurled sections -->
+              <line x1="120" y1="133" x2="120" y2="167" stroke="rgba(200,146,42,0.3)" stroke-width="0.8"/>
+              <line x1="130" y1="133" x2="130" y2="167" stroke="rgba(200,146,42,0.3)" stroke-width="0.8"/>
+              <line x1="270" y1="133" x2="270" y2="167" stroke="rgba(200,146,42,0.3)" stroke-width="0.8"/>
+              <line x1="280" y1="133" x2="280" y2="167" stroke="rgba(200,146,42,0.3)" stroke-width="0.8"/>
+              <!-- Dim lines -->
+              <line x1="20" y1="196" x2="380" y2="196" stroke="rgba(200,146,42,0.15)" stroke-width="0.5"/>
+              <line x1="20" y1="191" x2="20" y2="201" stroke="rgba(200,146,42,0.15)" stroke-width="0.5"/>
+              <line x1="380" y1="191" x2="380" y2="201" stroke="rgba(200,146,42,0.15)" stroke-width="0.5"/>
+              <text x="200" y="214" text-anchor="middle" fill="rgba(200,146,42,0.3)" font-family="JetBrains Mono,monospace" font-size="8">360.0mm OVERALL</text>
+              <!-- Ref box -->
+              <rect x="8" y="8" width="110" height="44" stroke="rgba(200,146,42,0.1)" stroke-width="0.5" fill="none"/>
+              <text x="14" y="22" fill="rgba(200,146,42,0.35)" font-family="JetBrains Mono,monospace" font-size="7">DYME PSI — ASSY-001</text>
+              <text x="14" y="34" fill="rgba(200,146,42,0.2)" font-family="JetBrains Mono,monospace" font-size="7">REV C | PRODUCTION</text>
+              <text x="14" y="46" fill="rgba(200,146,42,0.2)" font-family="JetBrains Mono,monospace" font-size="7">CINEFN STUDIO 2024</text>
+              <!-- Scan line -->
+              <rect x="20" y="120" width="360" height="1.5" fill="rgba(200,146,42,0.5)">
+                <animate attributeName="y" values="120;180;120" dur="3s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.5;0.05;0.5" dur="3s" repeatCount="indefinite"/>
+              </rect>
+            </g>
+          </svg>
+          <div class="viewer-corner-tl" style="position:absolute;top:16px;left:16px;width:20px;height:20px;border-top:1px solid rgba(200,146,42,0.4);border-left:1px solid rgba(200,146,42,0.4);"></div>
+          <div class="viewer-corner-tr" style="position:absolute;top:16px;right:16px;width:20px;height:20px;border-top:1px solid rgba(200,146,42,0.4);border-right:1px solid rgba(200,146,42,0.4);"></div>
+          <div class="viewer-corner-bl" style="position:absolute;bottom:16px;left:16px;width:20px;height:20px;border-bottom:1px solid rgba(200,146,42,0.4);border-left:1px solid rgba(200,146,42,0.4);"></div>
+          <div class="viewer-corner-br" style="position:absolute;bottom:16px;right:16px;width:20px;height:20px;border-bottom:1px solid rgba(200,146,42,0.4);border-right:1px solid rgba(200,146,42,0.4);"></div>
+          <div style="position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:0.12em;">EXPLODED ASSEMBLY</div>
+        </div>
+        <div class="case-visual-grid">
+          <div class="case-visual-sm" style="background:linear-gradient(135deg,#141414,#0d0d0d);">
+            <svg width="80%" height="80%" viewBox="0 0 200 120" fill="none">
+              <rect x="20" y="20" width="160" height="80" rx="4" stroke="rgba(200,146,42,0.3)" stroke-width="1" fill="rgba(200,146,42,0.02)"/>
+              <circle cx="100" cy="60" r="25" stroke="rgba(200,146,42,0.5)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+              <text x="100" y="65" text-anchor="middle" fill="rgba(200,146,42,0.4)" font-family="JetBrains Mono,monospace" font-size="8">PROTOTYPE</text>
+            </svg>
+          </div>
+          <div class="case-visual-sm" style="background:linear-gradient(135deg,#141414,#0d0d0d);">
+            <svg width="80%" height="80%" viewBox="0 0 200 120" fill="none">
+              <rect x="30" y="15" width="140" height="90" rx="2" stroke="rgba(200,146,42,0.3)" stroke-width="1" fill="rgba(200,146,42,0.02)"/>
+              <line x1="30" y1="45" x2="170" y2="45" stroke="rgba(200,146,42,0.15)" stroke-width="0.5"/>
+              <rect x="50" y="55" width="100" height="36" rx="2" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.04)"/>
+              <text x="100" y="78" text-anchor="middle" fill="rgba(200,146,42,0.4)" font-family="JetBrains Mono,monospace" font-size="8">FINAL PRODUCT</text>
+            </svg>
+          </div>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <div class="case-metric-val">48</div>
+            <div class="case-metric-label">Components</div>
+          </div>
+          <div class="case-metric">
+            <div class="case-metric-val">180</div>
+            <div class="case-metric-label">Days to Launch</div>
+          </div>
+          <div class="case-metric">
+            <div class="case-metric-val">3x</div>
+            <div class="case-metric-label">Revenue Growth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 3D VIEWER ─── -->
+<section id="viewer">
+  <div class="viewer-inner">
+    <div class="viewer-header reveal">
+      <div class="section-label" style="justify-content:center;"><span class="section-num">06</span> Interactive</div>
+      <h2 class="viewer-title">INTERACT WITH<br><span style="color:var(--gold)">THE DESIGN</span></h2>
+      <p class="viewer-subtitle">Explore engineering complexity in real time. Every surface, every component, every tolerance.</p>
+    </div>
+
+    <div class="viewer-stage reveal">
+      <div class="viewer-grid-lines"></div>
+
+      <div class="viewer-controls">
+        <button class="viewer-btn active">&#9654; Rotate Model</button>
+        <button class="viewer-btn">&#10010; Explode Assembly</button>
+        <button class="viewer-btn">&#9650; Isolate Parts</button>
+        <button class="viewer-btn">&#9741; Inspect Details</button>
+      </div>
+
+      <div class="viewer-corner viewer-corner-tl"></div>
+      <div class="viewer-corner viewer-corner-tr"></div>
+      <div class="viewer-corner viewer-corner-bl"></div>
+      <div class="viewer-corner viewer-corner-br"></div>
+
+      <div class="viewer-model">
+        <svg width="480" height="480" viewBox="0 0 480 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Large rotating product viewer CAD -->
+          <circle cx="240" cy="240" r="200" stroke="rgba(200,146,42,0.08)" stroke-width="1" stroke-dasharray="10 6"/>
+          <circle cx="240" cy="240" r="160" stroke="rgba(200,146,42,0.06)" stroke-width="0.5" stroke-dasharray="6 8"/>
+          <!-- Main body hex -->
+          <polygon points="240,80 340,130 380,240 340,350 240,400 140,350 100,240 140,130"
+            stroke="rgba(200,146,42,0.45)" stroke-width="1.5" fill="rgba(200,146,42,0.03)"/>
+          <!-- Inner hex -->
+          <polygon points="240,120 320,158 352,240 320,322 240,360 160,322 128,240 160,158"
+            stroke="rgba(200,146,42,0.25)" stroke-width="1" fill="rgba(200,146,42,0.02)"/>
+          <!-- Center ring -->
+          <circle cx="240" cy="240" r="70" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.04)"/>
+          <circle cx="240" cy="240" r="45" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.06)"/>
+          <circle cx="240" cy="240" r="20" stroke="rgba(200,146,42,0.8)" stroke-width="1.5" fill="rgba(200,146,42,0.15)"/>
+          <circle cx="240" cy="240" r="6" fill="rgba(200,146,42,0.9)"/>
+          <!-- Spoke details -->
+          <line x1="240" y1="160" x2="240" y2="195" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <line x1="240" y1="285" x2="240" y2="320" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <line x1="160" y1="240" x2="195" y2="240" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <line x1="285" y1="240" x2="320" y2="240" stroke="rgba(200,146,42,0.4)" stroke-width="1"/>
+          <line x1="173" y1="173" x2="196" y2="196" stroke="rgba(200,146,42,0.3)" stroke-width="1"/>
+          <line x1="284" y1="284" x2="307" y2="307" stroke="rgba(200,146,42,0.3)" stroke-width="1"/>
+          <line x1="307" y1="173" x2="284" y2="196" stroke="rgba(200,146,42,0.3)" stroke-width="1"/>
+          <line x1="196" y1="284" x2="173" y2="307" stroke="rgba(200,146,42,0.3)" stroke-width="1"/>
+          <!-- Corner bolt detail circles -->
+          <circle cx="340" cy="130" r="8" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="none"/>
+          <circle cx="380" cy="240" r="8" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="none"/>
+          <circle cx="340" cy="350" r="8" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="none"/>
+          <circle cx="140" cy="350" r="8" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="none"/>
+          <circle cx="100" cy="240" r="8" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="none"/>
+          <circle cx="140" cy="130" r="8" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="none"/>
+          <circle cx="240" cy="80" r="8" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="none"/>
+          <!-- Scan line -->
+          <rect x="100" y="240" width="280" height="1.5" fill="rgba(200,146,42,0.4)">
+            <animate attributeName="y" values="80;400;80" dur="5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.4;0.05;0.4" dur="5s" repeatCount="indefinite"/>
+          </rect>
+          <!-- Dimension labels -->
+          <text x="240" y="470" text-anchor="middle" fill="rgba(200,146,42,0.3)" font-family="JetBrains Mono,monospace" font-size="9">Ø 300mm</text>
+          <text x="16" y="244" fill="rgba(200,146,42,0.3)" font-family="JetBrains Mono,monospace" font-size="9" transform="rotate(-90,16,244)">320mm</text>
+        </svg>
+      </div>
+
+      <!-- Status readout -->
+      <div style="position:absolute;bottom:24px;right:24px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.12em;text-align:right;">
+        <div style="color:var(--gold);margin-bottom:4px;">● LIVE VIEWER</div>
+        <div>POLY COUNT: 48,239</div>
+        <div>SURFACES: 312</div>
+        <div>FORMAT: STEP/STL</div>
+      </div>
+    </div>
+
+    <div class="viewer-cta reveal">
+      <a href="#final-cta" class="btn-primary" style="margin-right:16px;">Request a Consultation</a>
+      <a href="#projects" class="btn-secondary">Explore More Work</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─── -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-left reveal">
+      <div class="section-label"><span class="section-num">07</span> The Studio</div>
+      <h2 class="about-manifesto">
+        ENGINEERING<br>CREATES <em>PRODUCTS.</em><br>
+        STORYTELLING<br>CREATES <em>DEMAND.</em><br>
+        WE DO BOTH.
+      </h2>
+      <p class="about-body">CINEFN is a product development and media studio founded on the belief that the best products deserve the best visual stories. We sit at the intersection of industrial precision and cinematic craft — building things, then showing the world why they matter.</p>
+      <div class="about-stats">
+        <div class="about-stat">
+          <div class="stat-val">50<span style="color:var(--white);font-size:28px;">+</span></div>
+          <div class="stat-label">Projects Completed</div>
+        </div>
+        <div class="about-stat">
+          <div class="stat-val">10<span style="color:var(--white);font-size:28px;">+</span></div>
+          <div class="stat-label">Industries Served</div>
+        </div>
+        <div class="about-stat">
+          <div class="stat-val">100<span style="color:var(--white);font-size:20px;">%</span></div>
+          <div class="stat-label">Custom Solutions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-right reveal reveal-delay-2">
+      <div class="about-photo-frame">
+        <div class="about-frame-corner tl"></div>
+        <div class="about-frame-corner tr"></div>
+        <div class="about-frame-corner bl"></div>
+        <div class="about-frame-corner br"></div>
+        <!-- Founder visual placeholder with cinematic grid -->
+        <svg width="80%" height="80%" viewBox="0 0 400 500" fill="none">
+          <!-- Silhouette with camera in industrial setting -->
+          <rect x="0" y="0" width="400" height="500" fill="rgba(20,20,20,0.5)"/>
+          <!-- Camera rig suggestion -->
+          <rect x="140" y="200" width="120" height="80" rx="4" stroke="rgba(200,146,42,0.4)" stroke-width="1.5" fill="rgba(200,146,42,0.04)"/>
+          <circle cx="200" cy="240" r="30" stroke="rgba(200,146,42,0.6)" stroke-width="1.5" fill="rgba(200,146,42,0.06)"/>
+          <circle cx="200" cy="240" r="18" stroke="rgba(200,146,42,0.4)" stroke-width="1" fill="rgba(200,146,42,0.08)"/>
+          <rect x="260" y="215" width="60" height="20" rx="2" stroke="rgba(200,146,42,0.3)" stroke-width="1" fill="rgba(200,146,42,0.03)"/>
+          <rect x="80" y="220" width="62" height="16" rx="2" stroke="rgba(200,146,42,0.3)" stroke-width="1" fill="rgba(200,146,42,0.03)"/>
+          <rect x="155" y="185" width="50" height="16" rx="2" stroke="rgba(200,146,42,0.3)" stroke-width="1" fill="rgba(200,146,42,0.03)"/>
+          <!-- Tripod legs -->
+          <line x1="200" y1="280" x2="160" y2="400" stroke="rgba(200,146,42,0.25)" stroke-width="1.5"/>
+          <line x1="200" y1="280" x2="240" y2="400" stroke="rgba(200,146,42,0.25)" stroke-width="1.5"/>
+          <line x1="200" y1="280" x2="200" y2="400" stroke="rgba(200,146,42,0.2)" stroke-width="1"/>
+          <!-- Light flare -->
+          <circle cx="320" cy="120" r="40" fill="rgba(200,146,42,0.03)"/>
+          <circle cx="320" cy="120" r="20" fill="rgba(200,146,42,0.05)"/>
+          <circle cx="320" cy="120" r="6" fill="rgba(200,146,42,0.15)"/>
+          <!-- Industrial bg suggestion -->
+          <line x1="0" y1="150" x2="400" y2="150" stroke="rgba(200,146,42,0.04)" stroke-width="0.5"/>
+          <line x1="0" y1="300" x2="400" y2="300" stroke="rgba(200,146,42,0.04)" stroke-width="0.5"/>
+          <text x="200" y="470" text-anchor="middle" fill="rgba(200,146,42,0.2)" font-family="JetBrains Mono,monospace" font-size="9">CINEFN STUDIO — ON SET</text>
+        </svg>
+        <div class="about-badge">EST. CINEFN STUDIOS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ─── -->
+<section id="final-cta">
+  <div class="final-bg"></div>
+  <div class="final-grid"></div>
+
+  <!-- Large decorative CAD corner -->
+  <svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0.04;" viewBox="0 0 1600 700" fill="none">
+    <circle cx="800" cy="350" r="280" stroke="rgba(200,146,42,1)" stroke-width="1" stroke-dasharray="12 8"/>
+    <circle cx="800" cy="350" r="180" stroke="rgba(200,146,42,1)" stroke-width="0.5" stroke-dasharray="6 10"/>
+    <line x1="0" y1="350" x2="1600" y2="350" stroke="rgba(200,146,42,1)" stroke-width="0.5" stroke-dasharray="20 12"/>
+    <line x1="800" y1="0" x2="800" y2="700" stroke="rgba(200,146,42,1)" stroke-width="0.5" stroke-dasharray="20 12"/>
+  </svg>
+
+  <div class="final-content reveal">
+    <div class="section-label" style="justify-content:center; margin-bottom:32px;"><span class="section-num">08</span> Let's Build</div>
+    <h2 class="final-headline">HAVE AN<br><span style="color:var(--gold);">IDEA?</span></h2>
+    <p style="font-size:15px;color:rgba(242,242,240,0.4);margin-bottom:48px;">Let's take it from concept to reality.</p>
+    <div class="final-steps">
+      <span class="final-step">Sketch</span>
+      <span class="final-sep">·</span>
+      <span class="final-step">Engineer</span>
+      <span class="final-sep">·</span>
+      <span class="final-step">Build</span>
+      <span class="final-sep">·</span>
+      <span class="final-step">Capture</span>
+      <span class="final-sep">·</span>
+      <span class="final-step">Launch</span>
+    </div>
+    <div class="final-ctas">
+      <a href="#" class="btn-primary">Start a Project</a>
+      <a href="#" class="btn-secondary">Schedule a Discovery Call</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">CINE<span>FN</span></div>
+        <div class="footer-tagline">From Concept to Camera.</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.1em;line-height:1.8;">
+          Product Development &amp; Media Studio<br>
+          Los Angeles, CA · Available Worldwide
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Engineering</div>
+        <ul class="footer-links">
+          <li><a href="#">3D Design &amp; Modeling</a></li>
+          <li><a href="#">Reverse Engineering</a></li>
+          <li><a href="#">3D Scanning</a></li>
+          <li><a href="#">Prototyping</a></li>
+          <li><a href="#">Manufacturing Support</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Media</div>
+        <ul class="footer-links">
+          <li><a href="#">Product Photography</a></li>
+          <li><a href="#">Commercial Video</a></li>
+          <li><a href="#">Content Creation</a></li>
+          <li><a href="#">Brand Storytelling</a></li>
+          <li><a href="#">Live Event Coverage</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Studio</div>
+        <ul class="footer-links">
+          <li><a href="#">About CINEFN</a></li>
+          <li><a href="#">Selected Work</a></li>
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="#">Process</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 CINEFN Studio. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">hello@cinefn.com</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ─── NAV SCROLL STATE ───
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ─── SCROLL REVEAL ───
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // ─── VIEWER BUTTONS ───
+  const viewerBtns = document.querySelectorAll('.viewer-btn');
+  viewerBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      viewerBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // ─── PROCESS STEP MOUSE ───
+  // Stagger observer for process steps
+  const steps = document.querySelectorAll('.process-step');
+  steps.forEach((step, i) => {
+    step.style.transitionDelay = `${i * 0.06}s`;
+  });
+
+  // ─── PARALLAX SUBTLE ───
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const heroBg = document.querySelector('.hero-bg');
+    if (heroBg) {
+      heroBg.style.transform = `translateY(${scrollY * 0.3}px)`;
+    }
+  });
+</script>
+</body>
+</html>
